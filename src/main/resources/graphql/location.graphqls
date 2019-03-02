@@ -1,0 +1,11 @@
+type Location {
+    id: ID!
+    latitude: Int!
+    longitude: Int!
+    place: String!
+    user: User!
+}
+
+extend type Mutation {
+    newLocation(latitude: Int!, longitude: Int!, place: String!, user: ID!): Location!
+}

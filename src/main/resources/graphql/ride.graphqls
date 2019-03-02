@@ -1,0 +1,20 @@
+type Ride {
+    id: ID!
+    location: String!
+    destination: String!
+    user: User!
+    fulfilled: Boolean!
+}
+
+extend type Query {
+    allRidesByUser(user: ID!): [Ride]
+    ride(id: ID!): Ride!
+}
+
+extend type Mutation {
+    request(location: String!, destination: String!, user: ID!): Ride!
+    fulfill(id: ID!): Boolean!
+    delete(id: ID!): Boolean!
+    terminate(id: ID!): Boolean!
+    change(id: ID!, destination: String!): Boolean!
+}

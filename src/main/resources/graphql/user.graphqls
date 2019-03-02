@@ -1,0 +1,24 @@
+type User {
+    id: ID!
+    username: String! @unique
+    phone: String! @unique
+    email: String! @unique
+    password: String!
+    token: String!
+    card: String!
+    cvv: String!
+    location: Location
+    requestedRides: [Ride]
+}
+
+type Query {
+    user(id: ID!): User!
+    byToken(token: String!): User!
+    byCard(card: String!): User! 
+}
+
+type Mutation {
+    newUser(username: String!, phone: String!, email: String!, password: String!, card: String!, cvv: String!): User!
+    update(id: ID!, phone: String, email: String, card: String, cvv: String): User!
+    login(username: String!, password: String!): User!
+}
