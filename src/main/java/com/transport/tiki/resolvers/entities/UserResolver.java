@@ -11,8 +11,8 @@ import com.transport.tiki.models.User;
 
 public class UserResolver implements GraphQLResolver<User> {
 
-    public List<Ride> getRides(User user) {
-        return user.getRides();
+    public List<Ride> getRequestedRides(User user) {
+        return user.getRequestedRides();
     }
 
     public Location getLocation(User user) {

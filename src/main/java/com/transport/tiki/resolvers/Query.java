@@ -14,9 +14,8 @@ import com.transport.tiki.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Component;
+//import org.springframework.stereotype.Component;
 
-@Component
 public class Query implements GraphQLQueryResolver {
     
     @Autowired

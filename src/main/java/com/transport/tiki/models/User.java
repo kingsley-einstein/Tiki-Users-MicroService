@@ -57,7 +57,7 @@ public class User implements java.io.Serializable {
     private Location location;
 
     @OneToMany(mappedBy = "user")
-    private List<Ride> rides;
+    private List<Ride> requestedRides;
 
     protected User() {}
 
@@ -135,7 +135,7 @@ public class User implements java.io.Serializable {
         return id;
     }
 
-    public List<Ride> getRides() {
-        return rides;
+    public List<Ride> getRequestedRides() {
+        return requestedRides;
     }
 }
