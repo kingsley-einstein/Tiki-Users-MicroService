@@ -6,9 +6,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.transport.tiki.dispatchers.EventDispatcher;
+import com.transport.tiki.events.LocationChangedEvent;
+import com.transport.tiki.events.RideDestinationChangedEvent;
 import com.transport.tiki.events.RideRequestedEvent;
 import com.transport.tiki.events.RideTerminatedEvent;
 import com.transport.tiki.exceptions.AnException;
+import com.transport.tiki.models.Location;
 import com.transport.tiki.models.Ride;
 import com.transport.tiki.models.User;
 import com.transport.tiki.repositories.LocationRepository;
@@ -89,7 +92,9 @@ public class Mutation implements GraphQLMutationResolver {
         Ride ride = new Ride(location, destination, userRepository.findOne(id), false);
         Ride savedRide = rideRepository.save(ride);
 
-        dispatcher.sendRideRequestedEvent(new RideRequestedEvent(savedRide));
+        dispatcher.sendRideRequestedEvent(
+            new RideRequestedEvent(savedRide)
+            );
 
         return savedRide;
     }
@@ -115,7 +120,9 @@ public class Mutation implements GraphQLMutationResolver {
         rideRepository.delete(ride);
 
         
-        dispatcher.sendRideTerminatedEvent(new RideTerminatedEvent(ride));
+        dispatcher.sendRideTerminatedEvent(
+            new RideTerminatedEvent(ride)
+            );
 
         return true;
     }
@@ -124,8 +131,40 @@ public class Mutation implements GraphQLMutationResolver {
         Ride ride = rideRepository.findOne(id);
         ride.setDestination(destination);
 
-        rideRepository.save(ride);
+        Ride changedRide = rideRepository.save(ride);
+
+        dispatcher.sendRideDestinationChangedEvent(
+            new RideDestinationChangedEvent(changedRide)
+            );
         
         return true;
+    }
+
+    public Location newLocation(
+        Integer latitude, 
+        Integer longitude, 
+        String place, 
+        Long id
+        ) {
+        Location location = locationRepository.findByUser(userRepository.findOne(id));
+
+        if (location != null) {
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            location.setPlace(place);
+
+            Location l = locationRepository.save(location);
+            
+            dispatcher.sendLocationChangedEvent(
+                new LocationChangedEvent(l)
+                );
+
+            return l;
+        }
+        else {
+            location = new Location(latitude, longitude, place, userRepository.findOne(id));
+
+            return locationRepository.save(location);
+        }
     }
 }

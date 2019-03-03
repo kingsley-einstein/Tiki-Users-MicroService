@@ -1,5 +1,7 @@
 package com.transport.tiki.dispatchers;
 
+import com.transport.tiki.events.LocationChangedEvent;
+import com.transport.tiki.events.RideDestinationChangedEvent;
 import com.transport.tiki.events.RideRequestedEvent;
 import com.transport.tiki.events.RideTerminatedEvent;
 
@@ -19,18 +21,24 @@ public class EventDispatcher {
     private String exchanger;
     private String requestRoutingKey;
     private String terminationRoutingKey;
+    private String changeRoutingKey;
+    private String locationChangeRoutingKey;
 
     @Autowired
     public EventDispatcher(
         RabbitTemplate template, 
         @Value("${amqp.exchanger}") String exchanger, 
         @Value("${amqp.eventRouting.request}") String requestRoutingKey,
-        @Value("${amqp.eventRouting.terminate}") String terminationRoutingKey
+        @Value("${amqp.eventRouting.terminate}") String terminationRoutingKey,
+        @Value("${amqp.eventRouting.change}") String changeRoutingKey,
+        @Value("${amqp.eventRouting.locationChange}") String locationChangeRoutingKey
     ) {
         this.template = template;
         this.exchanger = exchanger;
         this.requestRoutingKey = requestRoutingKey;
         this.terminationRoutingKey = terminationRoutingKey;
+        this.changeRoutingKey = changeRoutingKey;
+        this.locationChangeRoutingKey = locationChangeRoutingKey;
     }
 
     public void sendRideRequestedEvent(RideRequestedEvent event) {
@@ -41,5 +49,15 @@ public class EventDispatcher {
     public void sendRideTerminatedEvent(RideTerminatedEvent event) {
         logger.info("Sending ride terminated event > ...");
         template.convertAndSend(exchanger, terminationRoutingKey, event);
+    }
+
+    public void sendRideDestinationChangedEvent(RideDestinationChangedEvent event) {
+        logger.info("Sending ride destination change event > ...");
+        template.convertAndSend(exchanger, changeRoutingKey, event);
+    }
+
+    public void sendLocationChangedEvent(LocationChangedEvent event) {
+        logger.info("Sending location changed event > ...");
+        template.convertAndSend(exchanger, locationChangeRoutingKey, event);
     }
 }

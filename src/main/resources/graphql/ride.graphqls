@@ -7,7 +7,7 @@ type Ride {
 }
 
 extend type Query {
-    allRidesByUser(user: ID!): [Ride]
+    allRidesByUser(user: ID!, page: Int!): [Ride]
     ride(id: ID!): Ride!
 }
 
