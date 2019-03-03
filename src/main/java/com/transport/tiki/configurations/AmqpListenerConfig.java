@@ -14,22 +14,12 @@ import org.springframework.messaging.handler.annotation.support.DefaultMessageHa
 public class AmqpListenerConfig implements RabbitListenerConfigurer {
 
     @Bean
-    public TopicExchange exchange() {
-        return null;
-    }
-
-    @Bean
     public Queue queue() {
         return null;
     }
 
     @Bean
     public Binding binding(Queue queue, TopicExchange exchange) {
-        return null;
-    }
-
-    @Bean
-    public MappingJackson2MessageConverter messageConverter() {
         return null;
     }
 

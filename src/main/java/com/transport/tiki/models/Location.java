@@ -1,13 +1,16 @@
 package com.transport.tiki.models;
 
-import javax.persistence.CascadeType;
+//import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -21,18 +24,20 @@ public class Location implements java.io.Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
+    @NotNull
     @Column(name = "latitude", nullable = false)
     private Integer latitude;
 
-    @NotEmpty
+    @NotNull
     @Column(name = "longitude", nullable = false)
     private Integer longitude;
 
+    @NotEmpty
     @Column(name = "place", nullable = false)
     private String place;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "location")
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     protected Location() {}

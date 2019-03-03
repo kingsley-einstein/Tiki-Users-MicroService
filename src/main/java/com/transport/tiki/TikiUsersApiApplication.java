@@ -1,5 +1,6 @@
 package com.transport.tiki;
 
+import com.transport.tiki.dispatchers.EventDispatcher;
 import com.transport.tiki.resolvers.Mutation;
 import com.transport.tiki.resolvers.Query;
 import com.transport.tiki.resolvers.entities.LocationResolver;
@@ -18,8 +19,8 @@ public class TikiUsersApiApplication {
 	}
 
 	@Bean
-	public Mutation mutationBean() {
-		return new Mutation();
+	public Mutation mutationBean(EventDispatcher dispatcher) {
+		return new Mutation(dispatcher);
 	}
 
 	@Bean

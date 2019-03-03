@@ -37,8 +37,11 @@ public class Mutation implements GraphQLMutationResolver {
     @Autowired
     private BCryptPasswordEncoder encoder;
 
-    @Autowired
     private EventDispatcher dispatcher;
+
+    public Mutation(EventDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
+    }
 
     public User newUser(
         String username, 
