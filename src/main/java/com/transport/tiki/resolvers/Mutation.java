@@ -101,7 +101,7 @@ public class Mutation implements GraphQLMutationResolver {
 
         rideRepository.delete(ride);
 
-        dispatcher.sendRideTerminatedEvent(new RideTerminatedEvent(ride));
+        dispatcher.sendRideTerminatedEvent(new RideTerminatedEvent(ride.getId()));
 
         return true;
     }
@@ -112,7 +112,8 @@ public class Mutation implements GraphQLMutationResolver {
 
         Ride changedRide = rideRepository.save(ride);
 
-        dispatcher.sendRideDestinationChangedEvent(new RideDestinationChangedEvent(changedRide));
+        dispatcher.sendRideDestinationChangedEvent(
+                new RideDestinationChangedEvent(changedRide.getId(), changedRide.getDestination()));
 
         return true;
     }
@@ -127,7 +128,8 @@ public class Mutation implements GraphQLMutationResolver {
 
             Location l = locationRepository.save(location);
 
-            dispatcher.sendLocationChangedEvent(new LocationChangedEvent(l));
+            dispatcher.sendLocationChangedEvent(
+                    new LocationChangedEvent(l.getUser().getId(), l.getLatitude(), l.getLongitude()));
 
             return l;
         } else {

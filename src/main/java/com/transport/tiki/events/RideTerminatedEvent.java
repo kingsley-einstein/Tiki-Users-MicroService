@@ -1,18 +1,18 @@
 package com.transport.tiki.events;
 
-import com.transport.tiki.models.Ride;
+//import com.transport.tiki.models.Ride;
 
 public class RideTerminatedEvent implements java.io.Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
-    private Ride ride;
+    private Long rideId;
 
-    public RideTerminatedEvent(Ride ride) {
-        this.ride = ride;
+    public RideTerminatedEvent(Long rideId) {
+        this.rideId = rideId;
     }
 
-    public Ride getRide() {
-        return ride;
+    public Long getRideId() {
+        return rideId;
     }
 }
