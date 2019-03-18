@@ -27,10 +27,10 @@ public class Mutation implements GraphQLMutationResolver {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private RideRepository rideRepository;
-    
+
     @Autowired
     private LocationRepository locationRepository;
 
@@ -43,23 +43,9 @@ public class Mutation implements GraphQLMutationResolver {
         this.dispatcher = dispatcher;
     }
 
-    public User newUser(
-        String username, 
-        String phone, 
-        String email, 
-        String password, 
-        String card, 
-        String cvv
-    ) {
-        User user = new User(
-            username, 
-            phone, 
-            email, 
-            encoder.encode(password), 
-            BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt()), 
-            card, 
-            cvv
-        );
+    public User newUser(String username, String phone, String email, String password, String card, String cvv) {
+        User user = new User(username, phone, email, encoder.encode(password),
+                BCrypt.hashpw(UUID.randomUUID().toString(), BCrypt.gensalt()), card, cvv);
 
         return userRepository.save(user);
     }
@@ -76,27 +62,21 @@ public class Mutation implements GraphQLMutationResolver {
 
     public User login(String username, String password) {
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new AnException(
-                HttpServletResponse.SC_NOT_FOUND, 
-                "User not found"
-            )
-            );
-        
+                .orElseThrow(() -> new AnException(HttpServletResponse.SC_NOT_FOUND, "User not found"));
+
         if (encoder.matches(password, user.getPassword()))
             return user;
-        else throw new AnException(
-            HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
-            "Incorrect password"
-        );
+        else
+            throw new AnException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Incorrect password");
     }
 
     public Ride request(String location, String destination, Long id) {
         Ride ride = new Ride(location, destination, userRepository.findOne(id), false);
         Ride savedRide = rideRepository.save(ride);
 
-        dispatcher.sendRideRequestedEvent(
-            new RideRequestedEvent(savedRide)
-            );
+        dispatcher.sendRideRequestedEvent(new RideRequestedEvent(savedRide.getId(), savedRide.getUser().getUsername(),
+                savedRide.getUser().getLocation().getLatitude(), savedRide.getUser().getLocation().getLongitude(),
+                savedRide.getLocation(), savedRide.getDestination()));
 
         return savedRide;
     }
@@ -121,10 +101,7 @@ public class Mutation implements GraphQLMutationResolver {
 
         rideRepository.delete(ride);
 
-        
-        dispatcher.sendRideTerminatedEvent(
-            new RideTerminatedEvent(ride)
-            );
+        dispatcher.sendRideTerminatedEvent(new RideTerminatedEvent(ride));
 
         return true;
     }
@@ -135,19 +112,12 @@ public class Mutation implements GraphQLMutationResolver {
 
         Ride changedRide = rideRepository.save(ride);
 
-        dispatcher.sendRideDestinationChangedEvent(
-            new RideDestinationChangedEvent(changedRide)
-            );
-        
+        dispatcher.sendRideDestinationChangedEvent(new RideDestinationChangedEvent(changedRide));
+
         return true;
     }
 
-    public Location newLocation(
-        Integer latitude, 
-        Integer longitude, 
-        String place, 
-        Long id
-        ) {
+    public Location newLocation(Integer latitude, Integer longitude, String place, Long id) {
         Location location = locationRepository.findByUser(userRepository.findOne(id));
 
         if (location != null) {
@@ -156,14 +126,11 @@ public class Mutation implements GraphQLMutationResolver {
             location.setPlace(place);
 
             Location l = locationRepository.save(location);
-            
-            dispatcher.sendLocationChangedEvent(
-                new LocationChangedEvent(l)
-                );
+
+            dispatcher.sendLocationChangedEvent(new LocationChangedEvent(l));
 
             return l;
-        }
-        else {
+        } else {
             location = new Location(latitude, longitude, place, userRepository.findOne(id));
 
             return locationRepository.save(location);

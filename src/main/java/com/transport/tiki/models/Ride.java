@@ -15,7 +15,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Table(name = "ride_requests")
 @Entity
 public class Ride implements java.io.Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -30,20 +30,16 @@ public class Ride implements java.io.Serializable {
     @Column(name = "destination", nullable = false)
     private String destination;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH }, fetch = FetchType.EAGER)
     private User user;
 
     @Column(name = "completed", nullable = false)
     private Boolean fulfilled;
 
-    protected Ride() {}
+    protected Ride() {
+    }
 
-    public Ride(
-        String location, 
-        String destination, 
-        User user, 
-        Boolean fulfilled
-    ) {
+    public Ride(String location, String destination, User user, Boolean fulfilled) {
         this.location = location;
         this.destination = destination;
         this.user = user;
@@ -72,5 +68,9 @@ public class Ride implements java.io.Serializable {
 
     public Boolean getFulfilled() {
         return fulfilled;
+    }
+
+    public Long getId() {
+        return id;
     }
 }
