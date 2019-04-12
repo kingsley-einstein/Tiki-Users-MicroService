@@ -25,14 +25,9 @@ public class EventDispatcher {
     private String locationChangeRoutingKey;
 
     @Autowired
-    public EventDispatcher(
-        RabbitTemplate template, 
-        @Value("${amqp.exchanger}") String exchanger, 
-        @Value("${amqp.eventRouting.request}") String requestRoutingKey,
-        @Value("${amqp.eventRouting.terminate}") String terminationRoutingKey,
-        @Value("${amqp.eventRouting.change}") String changeRoutingKey,
-        @Value("${amqp.eventRouting.locationChange}") String locationChangeRoutingKey
-    ) {
+    public EventDispatcher(RabbitTemplate template, @Value("${amqp.exchanger}") String exchanger,
+            String requestRoutingKey, String terminationRoutingKey, String changeRoutingKey,
+            String locationChangeRoutingKey) {
         this.template = template;
         this.exchanger = exchanger;
         this.requestRoutingKey = requestRoutingKey;
